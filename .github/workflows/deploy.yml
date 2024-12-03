@@ -14,6 +14,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: List files in the root of the repository (for debugging)
+      run: ls -al $GITHUB_WORKSPACE
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
@@ -21,19 +24,18 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      working-directory: ./my-app  # Specify the correct directory
+      working-directory: $GITHUB_WORKSPACE/my-app  # Specify the correct directory
 
     - name: Build Next.js app
       run: npm run build
-      working-directory: ./my-app  # Specify the correct directory
+      working-directory: $GITHUB_WORKSPACE/my-app  # Specify the correct directory
 
     - name: List files in my-app directory (for debugging)
-      run: ls -al ./my-app
-      working-directory: ./my-app  # Ensure it's run in the correct directory
+      run: ls -al $GITHUB_WORKSPACE/my-app
 
     - name: Compress build files
       run: tar -czf build.tar.gz .next public package.json package-lock.json
-      working-directory: ./my-app  # Specify the correct directory
+      working-directory: $GITHUB_WORKSPACE/my-app  # Specify the correct directory
 
     - name: Copy files to EC2
       uses: appleboy/scp-action@v0.1.2
