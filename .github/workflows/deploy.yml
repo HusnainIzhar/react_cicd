@@ -33,7 +33,7 @@ jobs:
         working-directory: ./my-app  # Specify the correct directory
   
       - name: List contents of the build archive
-        run: tar -tzf build.tar.gz
+        run: tar -tzf ./my-app/build.tar.gz  # Ensure correct path
   
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.2
@@ -41,7 +41,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: build.tar.gz
+          source: ./my-app/build.tar.gz  # Ensure path is correct
           target: /home/ubuntu/app/
   
       - name: Deploy on EC2
