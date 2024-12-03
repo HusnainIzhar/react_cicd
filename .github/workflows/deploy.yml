@@ -3,7 +3,7 @@ on:
       branches:
         - main  # Trigger on pushes to the main branch
   
-  jobs:
+jobs:
     deploy:
       name: Deploy to EC2
       runs-on: ubuntu-latest
