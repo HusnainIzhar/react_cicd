@@ -1,0 +1,51 @@
+name: Deploy Next.js to EC2
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Specify your Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Next.js app
+      run: npm run build
+
+    - name: Compress build files
+      run: tar -czf build.tar.gz .next public package.json package-lock.json
+
+    - name: Copy files to EC2
+      uses: appleboy/scp-action@v0.2.1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        source: build.tar.gz
+        target: /home/ubuntu/app/
+
+    - name: Deploy on EC2
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        script: |
+          cd /home/ubuntu/app
+          tar -xzf build.tar.gz
+          npm install --production
+          pm2 stop all || true
+          pm2 start npm --name "nextjs-app" -- start
