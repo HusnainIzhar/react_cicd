@@ -24,6 +24,7 @@ jobs:
 
     - name: Build Next.js app
       run: npm run build
+      working-directory: ./my-app
 
     - name: Compress build files
       run: tar -czf build.tar.gz .next public package.json package-lock.json
