@@ -1,4 +1,4 @@
-name: Deploy to EC2 Instance
+name: Push-to-EC2 instance
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 Instance
+    name: Push to EC2
     runs-on: ubuntu-latest
 
     steps:
@@ -30,12 +30,14 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo apt update
-            sudo apt install -y apache2
-            # Add Node.js source for version 16.x
+            sudo yum -y update
+            sudo yum install -y httpd
+            sudo systemctl start httpd
+            sudo systemctl enable httpd
+            # Add Node.js source for latest version
             curl -sL https://rpm.nodesource.com/setup_20.x | sudo bash -
             # Install Node.js and npm
-            sudo apt install -y nodejs
+            sudo yum install -y nodejs
             # Navigate to the project directory
             cd ${{ secrets.TARGET_DIR }}
             # Install project dependencies
@@ -45,8 +47,8 @@ jobs:
             # Clean up existing files in the web server directory
             sudo rm -rf /var/www/html/*
             # Move the build files to the web server directory
-            sudo mv build/* /var/www/html/
+            sudo mv build/* /var/www/html
             # Set proper SELinux context for the web content
             sudo chcon -R -t httpd_sys_content_t /var/www/html
             # Restart Apache to apply changes
-            sudo systemctl restart apache2
+            sudo systemctl restart httpd
