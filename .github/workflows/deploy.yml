@@ -36,7 +36,7 @@ jobs:
             curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
             # Navigate to the project directory
-            cd ${{ secrets.TARGET_DIR }}
+            cd app/my-app
             # Install project dependencies
             npm install
             # Build the project
