@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -28,24 +29,30 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
             sudo apt-get update
             sudo apt-get install -y apache2
             sudo systemctl start apache2
             sudo systemctl enable apache2
             # Add Node.js source for latest version
-            curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            NODE_VERSION="20.x"
+            curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | sudo -E bash -
             sudo apt-get install -y nodejs
             # Navigate to the project directory
-            cd app/my-app
-            # Install project dependencies
-            npm install
-            # Build the project
-            npm run build
+            if [ -d "app/my-app" ]; then
+              cd app/my-app
+              npm install
+              npm run build
+            else
+              echo "Directory app/my-app not found!"
+              exit 1
+            fi
             # Clean up existing files in the web server directory
+            if [ ! -d "build" ]; then
+              echo "Build directory not found! Exiting."
+              exit 1
+            fi
             sudo rm -rf /var/www/html/*
-            # Move the build files to the web server directory
             sudo mv build/* /var/www/html
-            # Set proper SELinux context for the web content (for CentOS/Fedora, not needed in Ubuntu)
-            # sudo chcon -R -t httpd_sys_content_t /var/www/html
             # Restart Apache to apply changes
             sudo systemctl restart apache2
