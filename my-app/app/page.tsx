@@ -20,7 +20,7 @@ export default function Home() {
             </code>
             .
           </li>
-          <li>Changes Made to the file</li>
+          <li>Changes Mdade to the file</li>
         </ol>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
