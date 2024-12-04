@@ -1,3 +1,5 @@
+name: Deploy to EC2
+
 on:
   push:
     branches:
@@ -12,7 +14,7 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
 
-      - name: Deploy to my EC2 instance
+      - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
@@ -21,7 +23,7 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
-      - name: Executing remote ssh commands using ssh key
+      - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_DNS }}
@@ -29,14 +31,14 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             # Update system packages
-            sudo yum -y update
+            sudo apt-get update -y
 
-            # Install Node.js and npm (latest version)
-            curl -sL https://rpm.nodesource.com/setup_20.x | sudo bash -
-            sudo yum install -y nodejs
+            # Install Node.js and npm
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt-get install -y nodejs
 
             # Navigate to the project directory
-            cd /home/ec2-user/app/my-app
+            cd /home/ubuntu/app/react_cicd/my-app
 
             # Install project dependencies
             npm install
@@ -44,7 +46,7 @@ jobs:
             # Build the Next.js project
             npm run build
 
-            # Install PM2 to keep the app running in the background
+            # Install PM2 globally
             sudo npm install -g pm2
 
             # Start the Next.js app with PM2
@@ -53,8 +55,9 @@ jobs:
             # Save the PM2 process list so it persists after reboot
             pm2 save
 
-            # Setup PM2 to restart on server reboot
-            sudo pm2 startup systemd -u ec2-user --hp /home/ec2-user
+            # Set up PM2 to restart on server reboot
+            pm2 startup systemd
+            sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ${{ secrets.USERNAME }} --hp /home/${{ secrets.USERNAME }}
 
-            # Restart PM2 to apply the changes
+            # Restart the PM2 service
             sudo systemctl restart pm2
