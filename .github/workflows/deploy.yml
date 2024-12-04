@@ -39,7 +39,7 @@ jobs:
             # Install Node.js and npm
             sudo yum install -y nodejs
             # Navigate to the project directory
-            cd ${{ secrets.TARGET_DIR }}
+            cd /home/ec2-user/app/my-app
             # Install project dependencies
             npm install
             # Build the project
