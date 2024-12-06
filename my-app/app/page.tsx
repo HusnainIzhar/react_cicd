@@ -6,7 +6,7 @@ export default function Home() {
 
       <h1 className="text-4xl py-20">Changefjfdsffdfdssfdksjs CI BRANCHING</h1>
 
-      <h1 className="text-4xl py-20">lets ffdsjkljcfdsfdshafdsnge</h1>
+      <h1 className="text-4xl py-20">lets fffdsfdsdsjkljcfdsfdshafdsnge</h1>
     </div>
   );
 }
