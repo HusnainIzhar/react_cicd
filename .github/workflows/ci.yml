@@ -25,15 +25,14 @@ jobs:
             ls -R
   
 
-      - name: Change to frontend directory
+      - name: Install dependencies
         working-directory: ./my-app
         run: npm install
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Run tests
+        working-directory: ./my-app 
         run: npm test
 
       - name: Build project
+        working-directory: ./my-app
         run: npm run build
