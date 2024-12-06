@@ -6,7 +6,7 @@ export default function Home() {
 
       <h1 className="text-4xl py-20">Changefjdksjs CI BRANCHING</h1>
 
-      <h1 className="text-4xl py-20">lets change</h1>
+      <h1 className="text-4xl py-20">lets cfhange</h1>
     </div>
   );
 }
