@@ -19,6 +19,11 @@ jobs:
         with:
           node-version: 20
 
+
+      - name: Change to frontend directory
+        working-directory: ./
+        run: npm install
+
       - name: Install dependencies
         run: npm install
 
